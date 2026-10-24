@@ -1,0 +1,41 @@
+{
+  "run_id": "66b82699-ce81-4662-83b3-7c1708e159d7",
+  "status": "COMPLETED",
+  "findings": [
+    {
+      "type": "industry_partnership",
+      "claim_text": "A representative list of companies with which IISc faculty have research interaction include Boeing, CadilaPharmceuticals, Daimler Chrysler, General Electric, General Motors, Hindustan Lever Limited, Indian Immunologies, Intel, IBM, Microsoft, Nokia, Nortel, Pratt & Whitney, Sir Dorabji Tata Centre, Texas Instruments etc.",
+      "page_url": "https://www.iisc.ac.in/about/faculty-corner/why-iisc/",
+      "year_mentioned": null,
+      "category": "Industry Partnership"
+    },
+    {
+      "type": "industry_partnership",
+      "claim_text": "Research collaboration and funding are also obtained from industry.",
+      "page_url": "https://www.iisc.ac.in/about/faculty-corner/why-iisc/",
+      "year_mentioned": null,
+      "category": "Industry Partnership"
+    },
+    {
+      "type": "internship_career_claim",
+      "claim_text": "The Bachelor of Science (Research) programme is designed as a launching pad for attractive career opportunities in academia and industry.",
+      "page_url": "https://www.iisc.ac.in/about/faculty-corner/why-iisc/",
+      "year_mentioned": null,
+      "category": "Career/Internship Claim"
+    },
+    {
+      "type": "industry_partnership",
+      "claim_text": "The Institute also permits faculty members to undertake consultancy work, which is handled either by the Centre for Scientific and Industrial Consultancy (CSIC) or the Society for Innovation and Development (SID).",
+      "page_url": "https://www.iisc.ac.in/about/faculty-corner/why-iisc/",
+      "year_mentioned": null,
+      "category": "Industry Partnership"
+    }
+  ],
+  "summary": {
+    "placement_statistics": "No specific numerical placement statistics or placement rate figures were found on publicly stated pages. The campus placement portal (http://occap.iisc.ac.in/) was under maintenance during the visit.",
+    "industry_partnerships": "The 'Why IISc' page (https://www.iisc.ac.in/about/faculty-corner/why-iisc/) explicitly lists representative companies with which IISc faculty have research interaction: Boeing, CadilaPharmceuticals, Daimler Chrysler, General Electric, General Motors, Hindustan Lever Limited, Indian Immunologies, Intel, IBM, Microsoft, Nokia, Nortel, Pratt & Whitney, Sir Dorabji Tata Centre, Texas Instruments. IISc also mentions research collaboration and funding from industry.",
+    "internship_claims": "The B.Sc. (Research) programme is described as 'designed as a launching pad for attractive career opportunities in academia and industry.'",
+    "year_mentioned": "No specific year was mentioned alongside these placement statistics, industry partnerships, or internship claims on the pages reviewed."
+  },
+  "note": "The campus placement page (http://occap.iisc.ac.in/) was under maintenance and did not contain any placement statistics at the time of the visit. No numerical placement data was found across all pages reviewed."
+}
