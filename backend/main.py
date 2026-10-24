@@ -1,6 +1,6 @@
 
 from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel, HttpUrl
+from backend.schemas import ScanRequest, ScanResponse
 
 app = FastAPI(
     title="PromiseTrace AI",
@@ -9,29 +9,21 @@ app = FastAPI(
 )
 
 
-class ScanRequest(BaseModel):
-    url: HttpUrl
-
-
 @app.get("/")
 def home():
-    return {
-        "message": "PromiseTrace AI backend is running!"
-    }
+    return {"message": "PromiseTrace AI backend is running!"}
 
 
 @app.get("/health")
 def health_check():
-    return {
-        "status": "healthy"
-    }
+    return {"status": "healthy"}
 
 
-@app.post("/scan")
+@app.post("/scan", response_model=ScanResponse)
 def scan_website(request: ScanRequest):
-    return {
-        "institution_url": str(request.url),
-        "status": "pending",
-        "claims": [],
-        "message": "Scan endpoint ready for TinyFish integration"
-    }
+    return ScanResponse(
+        institution_url=str(request.url),
+        status="pending",
+        claims=[],
+        message="Ready for TinyFish integration"
+    )
