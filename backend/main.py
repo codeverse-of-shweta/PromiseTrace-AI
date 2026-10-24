@@ -1,6 +1,7 @@
 
 from fastapi import FastAPI, HTTPException
 from backend.schemas import ScanRequest, ScanResponse
+from backend.services import scan_institution
 
 app = FastAPI(
     title="PromiseTrace AI",
@@ -21,9 +22,4 @@ def health_check():
 
 @app.post("/scan", response_model=ScanResponse)
 def scan_website(request: ScanRequest):
-    return ScanResponse(
-        institution_url=str(request.url),
-        status="pending",
-        claims=[],
-        message="Ready for TinyFish integration"
-    )
+    return scan_institution(str(request.url))
