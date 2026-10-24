@@ -1,10 +1,3 @@
-"""PromiseTrace AI: source retrieval and evidence matching prototype.
-
-This tool retrieves text from the URL supplied with each extracted finding,
-finds the most relevant passages, and labels the result conservatively. It does
-not claim that text similarity alone proves a real-world claim is true.
-"""
-
 import csv
 import json
 import re
@@ -37,7 +30,6 @@ STOPWORDS = {
 
 
 class PageTextParser(HTMLParser):
-    """Extract readable text blocks from HTML without third-party packages."""
     BLOCK_TAGS = {"p", "li", "h1", "h2", "h3", "h4", "h5", "h6", "blockquote", "td", "th"}
     SKIP_TAGS = {"script", "style", "noscript", "svg", "nav", "footer", "header", "form"}
 
@@ -85,7 +77,6 @@ class PageTextParser(HTMLParser):
 
     def finish(self):
         self._flush()
-        # Some pages do not use paragraph tags; preserve readable fallback text.
         if not self.passages and self.current_parts:
             text = " ".join(self.current_parts).strip()
             if text:
@@ -99,7 +90,6 @@ def validate_url(url):
     parsed = urlparse(url)
     if parsed.scheme not in {"http", "https"} or not parsed.netloc:
         raise ValueError("Only absolute HTTP/HTTPS source URLs are supported")
-    # Avoid fetching local/private network targets from untrusted input.
     host = (parsed.hostname or "").lower()
     if host in {"localhost", "127.0.0.1", "::1", "0.0.0.0"} or host.endswith(".local"):
         raise ValueError("Local network URLs are not allowed")
@@ -107,7 +97,6 @@ def validate_url(url):
 
 
 def fetch_page(url):
-    """Fetch one public page. Returns metadata even when retrieval fails."""
     try:
         validate_url(url)
         request = Request(url, headers={"User-Agent": USER_AGENT, "Accept": "text/html, text/plain;q=0.9,*/*;q=0.5"})
@@ -162,7 +151,6 @@ def score_passage(claim_text, passage):
     overlap = claim_tokens & passage_tokens
     coverage = len(overlap) / len(claim_tokens)
     jaccard = len(overlap) / len(claim_tokens | passage_tokens)
-    # Character similarity helps for copied passages with small punctuation/wording changes.
     sequence = SequenceMatcher(None, (claim_text or "").lower(), (passage or "").lower()).ratio()
     score = min(1.0, 0.65 * coverage + 0.20 * jaccard + 0.15 * sequence)
     return round(score, 3), round(coverage, 3), round(jaccard, 3)
@@ -201,7 +189,6 @@ def create_database():
             summary_id INTEGER PRIMARY KEY AUTOINCREMENT, run_id TEXT,
             run_status TEXT, summary_json TEXT, note TEXT, created_at TEXT
         )""")
-        # Migrate databases created by the earlier prototype without deleting user data.
         claim_columns = {row[1] for row in conn.execute("PRAGMA table_info(claims)")}
         for name, sql_type in [("final_status", "TEXT NOT NULL DEFAULT 'EXTRACTED'"),
                                ("matching_score", "REAL"), ("last_checked", "TEXT")]:
@@ -296,7 +283,7 @@ def save_to_database(data, results):
                 result["source_url"], str(result["year_mentioned"]) if result["year_mentioned"] is not None else None,
                 result["source_status"], result["final_status"], result["matching_score"], now
             ))
-            # Re-running replaces evidence for this claim instead of accumulating duplicates.
+            
             conn.execute("DELETE FROM evidence WHERE claim_id = ?", (result["claim_id"],))
             for item in result["evidence_passages"]:
                 conn.execute("""INSERT INTO evidence (
