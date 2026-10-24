@@ -23,7 +23,7 @@ class Claim(BaseModel):
         "self_reported_only",
         "no_public_evidence_found",
         "contradicted"
-    ] = "no_public_evidence_found"
+    ]
     evidence: list[Evidence] = Field(default_factory=list)
 
 
