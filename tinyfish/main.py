@@ -63,6 +63,7 @@ def _extract_result(event: dict[str, Any]) -> dict[str, Any]:
         raise TinyFishError("TinyFish result is missing the findings list.")
 
     claims = []
+
     for finding in findings:
         if not isinstance(finding, dict):
             continue
@@ -93,17 +94,11 @@ def _extract_result(event: dict[str, Any]) -> dict[str, Any]:
 
 
 def collect_claims(institution_url: str) -> dict[str, Any]:
-    """
-    Run TinyFish against an institution URL and return structured claims.
-
-    Raises:
-        ValueError: Invalid institution URL.
-        TinyFishError: Missing API key, HTTP/SSE failure, malformed
-            response, or missing results.
-    """
+    """Collect institution claims using TinyFish."""
     institution_url = _validate_url(institution_url)
 
     api_key = os.environ.get("TINYFISH_API_KEY", "").strip()
+
     if not api_key:
         raise TinyFishError(
             "TINYFISH_API_KEY is not set in the environment."
@@ -133,8 +128,8 @@ def collect_claims(institution_url: str) -> dict[str, Any]:
             stream=True,
             timeout=DEFAULT_TIMEOUT,
         ) as response:
+
             if not response.ok:
-                # Do not include request headers or API keys in exceptions.
                 detail = response.text[:500]
                 raise TinyFishError(
                     f"TinyFish HTTP error {response.status_code}: {detail}"
@@ -146,14 +141,17 @@ def collect_claims(institution_url: str) -> dict[str, Any]:
             for raw_line in response.iter_lines(decode_unicode=True):
                 if raw_line is None:
                     continue
+
                 if isinstance(raw_line, bytes):
                     raw_line = raw_line.decode("utf-8", errors="replace")
 
                 line = raw_line.strip()
+
                 if not line:
                     continue
 
                 event = _parse_sse_line(line)
+
                 if event is None:
                     continue
 
@@ -168,7 +166,10 @@ def collect_claims(institution_url: str) -> dict[str, Any]:
                     break
 
             if error_event is not None:
-                message = error_event.get("message") or error_event.get("error")
+                message = (
+                    error_event.get("message")
+                    or error_event.get("error")
+                )
                 raise TinyFishError(
                     f"TinyFish run failed: {message or 'unspecified error'}"
                 )
@@ -187,22 +188,30 @@ def collect_claims(institution_url: str) -> dict[str, Any]:
 
             result = _extract_result(complete_event)
             result["institution_url"] = institution_url
+
             return result
 
     except requests.Timeout as exc:
         raise TinyFishError("TinyFish request timed out.") from exc
+
     except requests.RequestException as exc:
         raise TinyFishError(f"TinyFish request failed: {exc}") from exc
 
 
 if __name__ == "__main__":
-    import argparse
-
-    parser = argparse.ArgumentParser(description="Collect institution claims.")
-    parser.add_argument("institution_url", help="Official institution URL")
-    args = parser.parse_args()
-
     try:
-        print(json.dumps(collect_claims(args.institution_url), indent=2))
+        institution_url = input(
+            "Enter institution URL: "
+        ).strip()
+
+        result = collect_claims(institution_url)
+
+        print("\nTinyFish Results:")
+        print(json.dumps(result, indent=2, ensure_ascii=False))
+
     except (ValueError, TinyFishError) as exc:
         raise SystemExit(str(exc)) from exc
+
+    except KeyboardInterrupt:
+        raise SystemExit("\nOperation cancelled.")
+
